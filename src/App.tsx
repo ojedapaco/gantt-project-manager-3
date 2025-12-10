@@ -7,9 +7,6 @@ import { convertProjectsToGanttTasks } from './utils';
 import { sampleProjects } from './sampleData';
 import './App.css';
 
-// Importar estilos de Frappe Gantt
-import 'frappe-gantt/dist/frappe-gantt.css';
-
 function App() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [ganttTasks, setGanttTasks] = useState<Task[]>([]);

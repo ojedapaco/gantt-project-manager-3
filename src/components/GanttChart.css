@@ -1,0 +1,89 @@
+.gantt-container {
+  overflow: auto;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.gantt-empty {
+  background: white;
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  color: #666;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.gantt-popup {
+  padding: 12px;
+  min-width: 200px;
+}
+
+.gantt-popup h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.gantt-popup p {
+  margin: 5px 0;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Estilos personalizados para las barras */
+:global(.bar-wrapper) {
+  cursor: pointer;
+}
+
+:global(.project-bar .bar) {
+  fill: #2563eb !important;
+  stroke: #1e40af !important;
+}
+
+:global(.stage-bar .bar) {
+  fill: #7c3aed !important;
+  stroke: #6d28d9 !important;
+}
+
+:global(.task-completed .bar) {
+  fill: #10b981 !important;
+  stroke: #059669 !important;
+}
+
+:global(.task-in-progress .bar) {
+  fill: #f59e0b !important;
+  stroke: #d97706 !important;
+}
+
+:global(.task-pending .bar) {
+  fill: #94a3b8 !important;
+  stroke: #64748b !important;
+}
+
+:global(.bar-progress) {
+  fill: rgba(0, 0, 0, 0.15) !important;
+}
+
+:global(.gantt .grid-header) {
+  fill: #f8fafc;
+  stroke: #e2e8f0;
+}
+
+:global(.gantt .grid-row) {
+  fill: transparent;
+}
+
+:global(.gantt .row-line) {
+  stroke: #e2e8f0;
+}
+
+:global(.gantt .today-highlight) {
+  fill: rgba(37, 99, 235, 0.1);
+}
+
+:global(.gantt .arrow) {
+  stroke: #94a3b8;
+}

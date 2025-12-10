@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import Gantt from 'frappe-gantt';
 import { Task, ViewMode } from '../types';
 import './GanttChart.css';
 

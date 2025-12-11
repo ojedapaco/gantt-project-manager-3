@@ -78,22 +78,10 @@ const ProjectList = ({
           const isExpanded = expandedProjects.has(project.id);
 
           return (
-            <div
-              key={project.id}
-              className={`project-card ${isSelected ? 'selected' : ''}`}
-            >
-              <div 
-                className="project-card-header"
-                onClick={() => onSelectProject && onSelectProject(project.id)}
-              >
+            <div key={project.id} className={`project-card ${isSelected ? 'selected' : ''}`}>
+              <div className="project-card-header" onClick={() => onSelectProject && onSelectProject(project.id)}>
                 <div className="project-header-left">
-                  <button
-                    className="accordion-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleProject(project.id);
-                    }}
-                  >
+                  <button className="accordion-button" onClick={(e) => { e.stopPropagation(); toggleProject(project.id); }}>
                     {isExpanded ? '▼' : '▶'}
                   </button>
                   <h4>{project.name}</h4>
@@ -101,20 +89,12 @@ const ProjectList = ({
                 <div className="project-header-right">
                   <span className="project-percentage">{status.percentage}%</span>
                   {onEditProject && (
-                    <button
-                      className="btn-icon btn-edit"
-                      onClick={(e) => handleEdit(e, project)}
-                      title="Editar proyecto"
-                    >
+                    <button className="btn-icon btn-edit" onClick={(e) => handleEdit(e, project)} title="Editar proyecto">
                       ✏️
                     </button>
                   )}
                   {onDeleteProject && (
-                    <button
-                      className="btn-icon btn-delete"
-                      onClick={(e) => handleDelete(e, project.id, project.name)}
-                      title="Eliminar proyecto"
-                    >
+                    <button className="btn-icon btn-delete" onClick={(e) => handleDelete(e, project.id, project.name)} title="Eliminar proyecto">
                       🗑️
                     </button>
                   )}
@@ -124,10 +104,7 @@ const ProjectList = ({
               <p className="project-description">{project.description}</p>
               
               <div className="project-progress-bar">
-                <div
-                  className="project-progress-fill"
-                  style={{ width: `${status.percentage}%` }}
-                />
+                <div className="project-progress-fill" style={{ width: `${status.percentage}%` }} />
               </div>
               
               <div className="project-card-footer">
@@ -139,36 +116,32 @@ const ProjectList = ({
                 </span>
               </div>
 
-              {/* Acordeón de etapas */}
               {isExpanded && (
                 <div className="project-stages">
                   <h5 className="stages-title">Etapas:</h5>
-                  {project.stages
-                    .sort((a, b) => a.order - b.order)
-                    .map((stage) => (
-                      <div key={stage.id} className="stage-item">
-                        <div className="stage-header">
-                          <span className="stage-name">📋 {stage.name}</span>
-                          <span className="stage-task-count">
-                            {stage.tasks.filter(t => t.status === 'completed').length}/{stage.tasks.length}
-                          </span>
-                        </div>
-                        {stage.tasks.length > 0 && (
-                          <ul className="task-list">
-                            {stage.tasks.map((task) => (
-                              <li key={task.id} className={`task-item task-${task.status}`}>
-                                <span className="task-status-icon">
-                                  {task.status === 'completed' ? '✅' : 
-                                   task.status === 'in-progress' ? '🔄' : '⏸️'}
-                                </span>
-                                <span className="task-name">{task.name}</span>
-                                <span className="task-progress">{task.progress}%</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
+                  {project.stages.sort((a, b) => a.order - b.order).map((stage) => (
+                    <div key={stage.id} className="stage-item">
+                      <div className="stage-header">
+                        <span className="stage-name">📋 {stage.name}</span>
+                        <span className="stage-task-count">
+                          {stage.tasks.filter(t => t.status === 'completed').length}/{stage.tasks.length}
+                        </span>
                       </div>
-                    ))}
+                      {stage.tasks.length > 0 && (
+                        <ul className="task-list">
+                          {stage.tasks.map((task) => (
+                            <li key={task.id} className={`task-item task-${task.status}`}>
+                              <span className="task-status-icon">
+                                {task.status === 'completed' ? '✅' : task.status === 'in-progress' ? '🔄' : '⏸️'}
+                              </span>
+                              <span className="task-name">{task.name}</span>
+                              <span className="task-progress">{task.progress}%</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

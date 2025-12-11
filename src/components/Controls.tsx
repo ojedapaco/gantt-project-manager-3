@@ -14,7 +14,7 @@ const Controls = ({
   onAddProject,
   projectCount,
 }: ControlsProps) => {
-  const viewModes: ViewMode[] = ['Day', 'Week', 'Month'];
+  const viewModes: ViewMode[] = ['Day', 'Week', 'Month', 'Quarter'];
 
   return (
     <div className="controls">
@@ -36,7 +36,10 @@ const Controls = ({
               className={`view-mode-btn ${viewMode === mode ? 'active' : ''}`}
               onClick={() => onViewModeChange(mode)}
             >
-              {mode === 'Day' ? 'Día' : mode === 'Week' ? 'Semana' : 'Mes'}
+              {mode === 'Day' ? 'Día' : 
+               mode === 'Week' ? 'Semana' : 
+               mode === 'Month' ? 'Mes' :
+               'Trimestre'}
             </button>
           ))}
         </div>

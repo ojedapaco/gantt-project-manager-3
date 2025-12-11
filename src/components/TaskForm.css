@@ -1,0 +1,142 @@
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.task-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-form .form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.task-form .required {
+  color: #ef4444;
+}
+
+.task-form .form-group input,
+.task-form .form-group textarea,
+.task-form .form-group select {
+  padding: 10px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.task-form .form-group input:focus,
+.task-form .form-group textarea:focus,
+.task-form .form-group select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.task-form .form-group input.error,
+.task-form .form-group textarea.error,
+.task-form .form-group select.error {
+  border-color: #ef4444;
+}
+
+.task-form .form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.task-form .error-message {
+  font-size: 12px;
+  color: #ef4444;
+  margin-top: 4px;
+}
+
+.task-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.task-form input[type="range"] {
+  padding: 0;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.task-form input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #2563eb;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.task-form input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: #2563eb;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.progress-value {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2563eb;
+  margin-top: 8px;
+}
+
+.task-form .form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.task-form .btn-cancel,
+.task-form .btn-save {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.task-form .btn-cancel {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.task-form .btn-cancel:hover {
+  background: #e2e8f0;
+}
+
+.task-form .btn-save {
+  background: #10b981;
+  color: white;
+}
+
+.task-form .btn-save:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+@media (max-width: 768px) {
+  .task-form .form-row {
+    grid-template-columns: 1fr;
+  }
+}

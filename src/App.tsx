@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import GanttChart from './components/GanttChart';
 import Controls from './components/Controls';
 import ProjectList from './components/ProjectList';
+import Modal from './components/Modal';
+import ProjectForm from './components/ProjectForm';
 import { Project, ViewMode, Task } from './types';
 import { convertProjectsToGanttTasks } from './utils';
 import { sampleProjects } from './sampleData';
@@ -13,6 +15,11 @@ function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('Week');
   const [selectedProjectId, setSelectedProjectId] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Estados para modales
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [projectToEdit, setProjectToEdit] = useState<Project | undefined>();
 
   // Cargar proyectos al iniciar
   useEffect(() => {
@@ -39,8 +46,59 @@ function App() {
   };
 
   const handleAddProject = () => {
-    alert('Funcionalidad de agregar proyecto en desarrollo.\nPróximamente podrás crear proyectos desde la interfaz.');
-    // TODO: Implementar modal para crear nuevo proyecto
+    setIsAddModalOpen(true);
+  };
+
+  const handleSaveNewProject = (projectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const newProject: Project = {
+      ...projectData,
+      id: `proj-${Date.now()}`,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    setProjects(prev => [...prev, newProject]);
+    setIsAddModalOpen(false);
+    
+    // TODO: Guardar en Firebase
+    // await projectService.createProject(projectData);
+  };
+
+  const handleEditProject = (project: Project) => {
+    setProjectToEdit(project);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEditProject = (projectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => {
+    if (!projectToEdit) return;
+
+    const updatedProject: Project = {
+      ...projectData,
+      id: projectToEdit.id,
+      createdAt: projectToEdit.createdAt,
+      updatedAt: new Date(),
+    };
+
+    setProjects(prev => 
+      prev.map(p => p.id === projectToEdit.id ? updatedProject : p)
+    );
+    
+    setIsEditModalOpen(false);
+    setProjectToEdit(undefined);
+
+    // TODO: Actualizar en Firebase
+    // await projectService.updateProject(projectToEdit.id, projectData);
+  };
+
+  const handleDeleteProject = (projectId: string) => {
+    setProjects(prev => prev.filter(p => p.id !== projectId));
+    
+    if (selectedProjectId === projectId) {
+      setSelectedProjectId(undefined);
+    }
+
+    // TODO: Eliminar de Firebase
+    // await projectService.deleteProject(projectId);
   };
 
   const handleTaskChange = (updatedTask: Task) => {
@@ -83,6 +141,8 @@ function App() {
           projects={projects}
           onSelectProject={handleSelectProject}
           selectedProjectId={selectedProjectId}
+          onEditProject={handleEditProject}
+          onDeleteProject={handleDeleteProject}
         />
 
         <GanttChart
@@ -93,8 +153,39 @@ function App() {
       </main>
 
       <footer className="app-footer">
-        <p>Desarrollado por Paco | Versión 1.0.0 MVP</p>
+        <p>Desarrollado por Paco | Versión 5.0.0 - CRUD Completo</p>
       </footer>
+
+      {/* Modal para agregar proyecto */}
+      <Modal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        title="Nuevo Proyecto"
+      >
+        <ProjectForm
+          onSave={handleSaveNewProject}
+          onCancel={() => setIsAddModalOpen(false)}
+        />
+      </Modal>
+
+      {/* Modal para editar proyecto */}
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setProjectToEdit(undefined);
+        }}
+        title="Editar Proyecto"
+      >
+        <ProjectForm
+          project={projectToEdit}
+          onSave={handleSaveEditProject}
+          onCancel={() => {
+            setIsEditModalOpen(false);
+            setProjectToEdit(undefined);
+          }}
+        />
+      </Modal>
     </div>
   );
 }

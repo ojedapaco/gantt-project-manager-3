@@ -1,4 +1,4 @@
-# 📊 Gestor de Proyectos con Gantt
+# 📊 Gestor de Proyectos con Gantt ..
 
 Sistema de visualización y gestión de proyectos con diagrama de Gantt interactivo.
 

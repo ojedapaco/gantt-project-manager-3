@@ -9,8 +9,8 @@ import {
   orderBy,
   Timestamp
 } from 'firebase/firestore';
-import { db } from './firebase';
-import { Project } from './types';
+import { db } from '../firebase';
+import { Project } from '../types';
 
 const PROJECTS_COLLECTION = 'projects';
 

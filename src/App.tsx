@@ -4,7 +4,8 @@ import Controls from './components/Controls';
 import ProjectList from './components/ProjectList';
 import Modal from './components/Modal';
 import ProjectForm from './components/ProjectForm';
-import { Project, ViewMode, Task } from './types';
+import TaskForm from './components/TaskForm';
+import { Project, ViewMode, Task, StageTask } from './types';
 import { convertProjectsToGanttTasks } from './utils';
 import { sampleProjects } from './sampleData';
 import './App.css';
@@ -16,17 +17,24 @@ function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(true);
   
-  // Estados para modales
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  // Estados para modales de proyectos
+  const [isAddProjectModalOpen, setIsAddProjectModalOpen] = useState(false);
+  const [isEditProjectModalOpen, setIsEditProjectModalOpen] = useState(false);
   const [projectToEdit, setProjectToEdit] = useState<Project | undefined>();
 
-  // Cargar proyectos al iniciar
+  // Estados para modales de tareas
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
+  const [taskContext, setTaskContext] = useState<{
+    projectId: string;
+    stageId: string;
+    task?: StageTask;
+  } | null>(null);
+
   useEffect(() => {
     loadProjects();
   }, []);
 
-  // Convertir proyectos a tareas de Gantt cuando cambien
   useEffect(() => {
     const tasks = convertProjectsToGanttTasks(projects);
     setGanttTasks(tasks);
@@ -35,8 +43,6 @@ function App() {
   const loadProjects = async () => {
     setIsLoading(true);
     try {
-      // Por ahora usamos datos de ejemplo
-      // Más adelante puedes conectar con Firebase usando projectService
       setProjects(sampleProjects);
     } catch (error) {
       console.error('Error al cargar proyectos:', error);
@@ -46,7 +52,7 @@ function App() {
   };
 
   const handleAddProject = () => {
-    setIsAddModalOpen(true);
+    setIsAddProjectModalOpen(true);
   };
 
   const handleSaveNewProject = (projectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -56,59 +62,127 @@ function App() {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-
     setProjects(prev => [...prev, newProject]);
-    setIsAddModalOpen(false);
-    
-    // TODO: Guardar en Firebase
-    // await projectService.createProject(projectData);
+    setIsAddProjectModalOpen(false);
   };
 
   const handleEditProject = (project: Project) => {
     setProjectToEdit(project);
-    setIsEditModalOpen(true);
+    setIsEditProjectModalOpen(true);
   };
 
   const handleSaveEditProject = (projectData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => {
     if (!projectToEdit) return;
-
     const updatedProject: Project = {
       ...projectData,
       id: projectToEdit.id,
       createdAt: projectToEdit.createdAt,
       updatedAt: new Date(),
     };
-
-    setProjects(prev => 
-      prev.map(p => p.id === projectToEdit.id ? updatedProject : p)
-    );
-    
-    setIsEditModalOpen(false);
+    setProjects(prev => prev.map(p => p.id === projectToEdit.id ? updatedProject : p));
+    setIsEditProjectModalOpen(false);
     setProjectToEdit(undefined);
-
-    // TODO: Actualizar en Firebase
-    // await projectService.updateProject(projectToEdit.id, projectData);
   };
 
   const handleDeleteProject = (projectId: string) => {
     setProjects(prev => prev.filter(p => p.id !== projectId));
-    
     if (selectedProjectId === projectId) {
       setSelectedProjectId(undefined);
     }
+  };
 
-    // TODO: Eliminar de Firebase
-    // await projectService.deleteProject(projectId);
+  const handleAddTask = (projectId: string, stageId: string) => {
+    setTaskContext({ projectId, stageId });
+    setIsAddTaskModalOpen(true);
+  };
+
+  const handleEditTask = (projectId: string, stageId: string, task: StageTask) => {
+    setTaskContext({ projectId, stageId, task });
+    setIsEditTaskModalOpen(true);
+  };
+
+  const handleSaveNewTask = (stageId: string, taskData: Omit<StageTask, 'id'>) => {
+    if (!taskContext) return;
+    const newTask: StageTask = { ...taskData, id: `task-${Date.now()}` };
+    setProjects(prev => prev.map(project => {
+      if (project.id === taskContext.projectId) {
+        return {
+          ...project,
+          stages: project.stages.map(stage => {
+            if (stage.id === stageId) {
+              return { ...stage, tasks: [...stage.tasks, newTask] };
+            }
+            return stage;
+          }),
+          updatedAt: new Date(),
+        };
+      }
+      return project;
+    }));
+    setIsAddTaskModalOpen(false);
+    setTaskContext(null);
+  };
+
+  const handleSaveEditTask = (stageId: string, taskData: Omit<StageTask, 'id'>) => {
+    if (!taskContext || !taskContext.task) return;
+    const updatedTask: StageTask = { ...taskData, id: taskContext.task.id };
+    setProjects(prev => prev.map(project => {
+      if (project.id === taskContext.projectId) {
+        return {
+          ...project,
+          stages: project.stages.map(stage => {
+            if (stage.id === stageId) {
+              return {
+                ...stage,
+                tasks: stage.tasks.map(t => t.id === taskContext.task!.id ? updatedTask : t),
+              };
+            }
+            return stage;
+          }),
+          updatedAt: new Date(),
+        };
+      }
+      return project;
+    }));
+    setIsEditTaskModalOpen(false);
+    setTaskContext(null);
+  };
+
+  const handleDeleteTask = (projectId: string, stageId: string, taskId: string) => {
+    setProjects(prev => prev.map(project => {
+      if (project.id === projectId) {
+        return {
+          ...project,
+          stages: project.stages.map(stage => {
+            if (stage.id === stageId) {
+              return { ...stage, tasks: stage.tasks.filter(t => t.id !== taskId) };
+            }
+            return stage;
+          }),
+          updatedAt: new Date(),
+        };
+      }
+      return project;
+    }));
   };
 
   const handleTaskChange = (updatedTask: Task) => {
     console.log('Tarea actualizada:', updatedTask);
-    // TODO: Implementar la actualización en Firebase
-    alert(`Tarea actualizada:\n${updatedTask.name}\nNuevo rango: ${updatedTask.start} - ${updatedTask.end}`);
   };
 
   const handleSelectProject = (projectId: string) => {
     setSelectedProjectId(projectId === selectedProjectId ? undefined : projectId);
+  };
+
+  const getCurrentProject = () => {
+    if (!taskContext) return undefined;
+    return projects.find(p => p.id === taskContext.projectId);
+  };
+
+  const getCurrentStage = () => {
+    const project = getCurrentProject();
+    if (!project || !taskContext) return undefined;
+    return project.stages.find(s => s.id === taskContext.stageId);
   };
 
   if (isLoading) {
@@ -128,7 +202,6 @@ function App() {
         <h1>🚀 Gestor de Proyectos con Gantt</h1>
         <p className="app-subtitle">Visualiza y gestiona todos tus proyectos en paralelo</p>
       </header>
-
       <main className="app-main">
         <Controls
           viewMode={viewMode}
@@ -136,55 +209,32 @@ function App() {
           onAddProject={handleAddProject}
           projectCount={projects.length}
         />
-
         <ProjectList
           projects={projects}
           onSelectProject={handleSelectProject}
           selectedProjectId={selectedProjectId}
           onEditProject={handleEditProject}
           onDeleteProject={handleDeleteProject}
+          onAddTask={handleAddTask}
+          onEditTask={handleEditTask}
+          onDeleteTask={handleDeleteTask}
         />
-
-        <GanttChart
-          tasks={ganttTasks}
-          viewMode={viewMode}
-          onTaskChange={handleTaskChange}
-        />
+        <GanttChart tasks={ganttTasks} viewMode={viewMode} onTaskChange={handleTaskChange} />
       </main>
-
       <footer className="app-footer">
-        <p>Desarrollado por Paco | Versión 5.0.0 - CRUD Completo</p>
+        <p>Desarrollado por Paco | Versión 6.0.0 - CRUD Completo con Tareas</p>
       </footer>
-
-      {/* Modal para agregar proyecto */}
-      <Modal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        title="Nuevo Proyecto"
-      >
-        <ProjectForm
-          onSave={handleSaveNewProject}
-          onCancel={() => setIsAddModalOpen(false)}
-        />
+      <Modal isOpen={isAddProjectModalOpen} onClose={() => setIsAddProjectModalOpen(false)} title="Nuevo Proyecto">
+        <ProjectForm onSave={handleSaveNewProject} onCancel={() => setIsAddProjectModalOpen(false)} />
       </Modal>
-
-      {/* Modal para editar proyecto */}
-      <Modal
-        isOpen={isEditModalOpen}
-        onClose={() => {
-          setIsEditModalOpen(false);
-          setProjectToEdit(undefined);
-        }}
-        title="Editar Proyecto"
-      >
-        <ProjectForm
-          project={projectToEdit}
-          onSave={handleSaveEditProject}
-          onCancel={() => {
-            setIsEditModalOpen(false);
-            setProjectToEdit(undefined);
-          }}
-        />
+      <Modal isOpen={isEditProjectModalOpen} onClose={() => { setIsEditProjectModalOpen(false); setProjectToEdit(undefined); }} title="Editar Proyecto">
+        <ProjectForm project={projectToEdit} onSave={handleSaveEditProject} onCancel={() => { setIsEditProjectModalOpen(false); setProjectToEdit(undefined); }} />
+      </Modal>
+      <Modal isOpen={isAddTaskModalOpen} onClose={() => { setIsAddTaskModalOpen(false); setTaskContext(null); }} title="Nueva Tarea">
+        <TaskForm stages={getCurrentProject()?.stages || []} currentStage={getCurrentStage()} onSave={handleSaveNewTask} onCancel={() => { setIsAddTaskModalOpen(false); setTaskContext(null); }} />
+      </Modal>
+      <Modal isOpen={isEditTaskModalOpen} onClose={() => { setIsEditTaskModalOpen(false); setTaskContext(null); }} title="Editar Tarea">
+        <TaskForm task={taskContext?.task} stages={getCurrentProject()?.stages || []} currentStage={getCurrentStage()} onSave={handleSaveEditTask} onCancel={() => { setIsEditTaskModalOpen(false); setTaskContext(null); }} />
       </Modal>
     </div>
   );

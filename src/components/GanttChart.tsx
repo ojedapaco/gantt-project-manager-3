@@ -32,6 +32,7 @@ const GanttChart = ({ tasks, viewMode }: GanttChartProps) => {
       case 'Week': return 40;
       case 'Month': return 30;
       case 'Quarter': return 20;
+      case 'Semester': return 15;
       default: return 40;
     }
   };
@@ -62,7 +63,33 @@ const GanttChart = ({ tasks, viewMode }: GanttChartProps) => {
     const headers = [];
     const columnWidth = getColumnWidth();
     
-    if (viewMode === 'Quarter') {
+    if (viewMode === 'Semester') {
+      let currentDate = new Date(startDate);
+      let semesterIndex = 0;
+      
+      while (currentDate <= endDate) {
+        const semester = currentDate.getMonth() < 6 ? 1 : 2;
+        const semesterStart = new Date(currentDate.getFullYear(), semester === 1 ? 0 : 6, 1);
+        const semesterEnd = new Date(currentDate.getFullYear(), semester === 1 ? 6 : 12, 0);
+        const displayEnd = semesterEnd > endDate ? endDate : semesterEnd;
+        
+        const daysInRange = Math.ceil((displayEnd.getTime() - semesterStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        const width = daysInRange * columnWidth;
+        
+        headers.push(
+          <div key={semesterIndex} className="timeline-header-cell" style={{ width: `${width}px` }}>
+            S{semester} {currentDate.getFullYear()}
+          </div>
+        );
+        
+        currentDate = new Date(currentDate.getFullYear(), semester === 1 ? 6 : 12, 1);
+        if (semester === 2) {
+          currentDate.setFullYear(currentDate.getFullYear() + 1);
+          currentDate.setMonth(0);
+        }
+        semesterIndex++;
+      }
+    } else if (viewMode === 'Quarter') {
       let currentDate = new Date(startDate);
       let quarterIndex = 0;
       

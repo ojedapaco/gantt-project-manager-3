@@ -177,7 +177,7 @@ const ProjectForm = ({ project, onSave, onCancel }: ProjectFormProps) => {
       </div>
 
       <div className="form-info">
-        ℹ️ El proyecto se creará con las 6 etapas estándar: Inicio, Planificación, Ejecución, Seguimiento, Entrega y Cierre.
+        ℹ️ El proyecto se creará con las 6 etapas estándar: Inicio, Planificación, Ejecución, Seguimiento, Entrega y Cierre. Puedes usar fechas pasadas para proyectos ya iniciados o finalizados.
       </div>
 
       <div className="form-actions">

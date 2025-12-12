@@ -37,4 +37,4 @@ export interface StageTask {
   notes?: string;
 }
 
-export type ViewMode = 'Day' | 'Week' | 'Month' | 'Quarter';
+export type ViewMode = 'Day' | 'Week' | 'Month' | 'Quarter' | 'Semester';

@@ -1,20 +1,18 @@
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
-// TODO: Reemplazar con tu configuración de Firebase
+// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_AUTH_DOMAIN",
-  projectId: "TU_PROJECT_ID",
-  storageBucket: "TU_STORAGE_BUCKET",
-  messagingSenderId: "TU_MESSAGING_SENDER_ID",
-  appId: "TU_APP_ID"
+  apiKey: "AIzaSyBQnMeQiZY5M_zAgo_MtX784aq-N9hc7NU",
+  authDomain: "gantt-project-manager.firebaseapp.com",
+  projectId: "gantt-project-manager",
+  storageBucket: "gantt-project-manager.firebasestorage.app",
+  messagingSenderId: "644678576312",
+  appId: "1:644678576312:web:e0c498809765a403306c4d"
 };
 
-// Inicializar Firebase
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Inicializar Firestore
 export const db = getFirestore(app);
-
 export default app;
